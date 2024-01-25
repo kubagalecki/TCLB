@@ -275,9 +275,15 @@ void ArbLattice::computeLocalPermutation(pugi::xml_node arb_node, const std::map
     };
     const auto interior_begin = std::stable_partition(lids.begin(), lids.end(), is_border_node);
     sizes.border_nodes = static_cast<size_t>(std::distance(lids.begin(), interior_begin));
-    const auto compare = makePermCompare(arb_node, setting_zones);
-    std::sort(lids.begin(), interior_begin, compare);
-    std::sort(interior_begin, lids.end(), compare);
+    if(std::string_view{arb_node.attribute("permutation").value()} == "random") {
+        auto prng = std::mt19937{};
+        std::shuffle(lids.begin(), interior_begin, prng);
+        std::shuffle(interior_begin, lids.end(), prng);
+    } else {
+        const auto compare = makePermCompare(arb_node, setting_zones);
+        std::sort(lids.begin(), interior_begin, compare);
+        std::sort(interior_begin, lids.end(), compare);
+    }
     local_permutation.resize(connect.getLocalSize());
     size_t i = 0;
     for (const auto& lid : lids) local_permutation[lid] = i++;
