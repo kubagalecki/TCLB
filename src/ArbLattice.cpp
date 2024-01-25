@@ -263,6 +263,8 @@ std::function<bool(int, int)> ArbLattice::makePermCompare(pugi::xml_node arb_nod
     return {};  // avoid compiler warning
 }
 
+#include <random>
+
 void ArbLattice::computeLocalPermutation(pugi::xml_node arb_node, const std::map<std::string, int>& setting_zones) {
     std::vector<size_t> lids(connect.getLocalSize());  // globalIdx - chunk_begin of elements
     std::iota(lids.begin(), lids.end(), 0);
